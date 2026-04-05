@@ -122,9 +122,8 @@ def load_data():
         'Greed': 'Greed', 'Extreme Greed': 'Greed'
     })
 
-    with st.spinner("Analyzing 47MB of Hyperliquid trade data..."):
         hd_cols = ['Account', 'Direction', 'Closed PnL', 'Size USD', 'Timestamp IST']
-        hd = pd.read_csv("historical_data.csv", usecols=hd_cols)
+        hd = pd.read_csv("historical_data.csv.gz", usecols=hd_cols)
         hd['datetime'] = pd.to_datetime(hd['Timestamp IST'], format='%d-%m-%Y %H:%M')
         hd['date'] = hd['datetime'].dt.normalize()
         hd = hd.merge(fg[['date', 'fg_value', 'sentiment', 'sentiment_binary']], on='date', how='left')
