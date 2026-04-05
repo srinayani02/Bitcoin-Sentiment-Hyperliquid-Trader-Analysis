@@ -38,7 +38,7 @@ plt.rcParams.update({
     'font.family': 'sans-serif',
 })
 
-OUTPUT_DIR = "charts"
+OUTPUT_DIR = "dashboard/charts"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def save(fig, name):
@@ -55,7 +55,7 @@ print("PART A — DATA PREPARATION")
 print("=" * 72)
 
 # ── A.1  Load Sentiment Data ──────────────────────────────────────────
-fg = pd.read_csv("fear_greed_index.csv")
+fg = pd.read_csv("dashboard/fear_greed_index.csv")
 fg['date'] = pd.to_datetime(fg['date'])
 fg = fg.rename(columns={'classification': 'sentiment', 'value': 'fg_value'})
 
@@ -75,9 +75,15 @@ fg['sentiment_binary'] = fg['sentiment'].map({
 })
 
 # ── A.2  Load Trader Data ─────────────────────────────────────────────
-hd = pd.read_csv("historical_data.csv")
+hd = pd.read_csv("dashboard/historical_data.csv.gz")
 
-print(f"\n📊 Hyperliquid Trader Data")
+# Mock missing columns if using trimmed dataset
+if 'Coin' not in hd.columns: hd['Coin'] = 'BTC'
+if 'Fee' not in hd.columns: hd['Fee'] = 0.0
+if 'Timestamp IST' not in hd.columns and 'Timestamp' in hd.columns:
+    hd['Timestamp IST'] = pd.to_datetime(hd['Timestamp'], unit='ms').dt.strftime('%d-%m-%Y %H:%M')
+
+print(f"\n📊 Hyperliquid Trader Data (Optimized GZ Download)")
 print(f"   Rows: {len(hd):,}  |  Columns: {hd.shape[1]}")
 print(f"   Missing values per column:")
 for col in hd.columns:
