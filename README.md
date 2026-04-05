@@ -16,7 +16,7 @@ python3 analysis.py
 ### 3. Launch the Interactive Dashboard
 Explore the data visually through a premium Streamlit interface:
 ```bash
-streamlit run dashboard.py
+streamlit run app.py
 ```
 
 ### 4. Direct Reports
@@ -26,7 +26,7 @@ streamlit run dashboard.py
 ## 📊 Project Structure
 
 - `analysis.py`: Main processing script (Data cleaning, Segmentation, Clustering, Prediction).
-- `dashboard.py`: Streamlit-based interactive dashboard with 5 specialized tabs.
+- `app.py`: Streamlit-based interactive dashboard with 5 specialized tabs.
 - `requirements.txt`: List of necessary Python libraries.
 - `charts/`: Visual output from the analysis script, including the Strategy Infographic.
 - `fear_greed_index.csv`: Daily Bitcoin market sentiment data.
