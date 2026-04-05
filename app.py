@@ -122,20 +122,22 @@ def load_data():
         'Greed': 'Greed', 'Extreme Greed': 'Greed'
     })
 
-    hd = pd.read_csv("historical_data.csv")
-    hd['datetime'] = pd.to_datetime(hd['Timestamp IST'], format='%d-%m-%Y %H:%M')
-    hd['date'] = hd['datetime'].dt.normalize()
-    hd = hd.merge(fg[['date', 'fg_value', 'sentiment', 'sentiment_binary']], on='date', how='left')
+    with st.spinner("Analyzing 47MB of Hyperliquid trade data..."):
+        hd_cols = ['Account', 'Direction', 'Closed PnL', 'Size USD', 'Timestamp IST']
+        hd = pd.read_csv("historical_data.csv", usecols=hd_cols)
+        hd['datetime'] = pd.to_datetime(hd['Timestamp IST'], format='%d-%m-%Y %H:%M')
+        hd['date'] = hd['datetime'].dt.normalize()
+        hd = hd.merge(fg[['date', 'fg_value', 'sentiment', 'sentiment_binary']], on='date', how='left')
 
-    def classify_event(d):
-        d = str(d).lower()
-        if 'open long' in d: return 'open_long'
-        if 'close long' in d: return 'close_long'
-        if 'open short' in d: return 'open_short'
-        if 'close short' in d: return 'close_short'
-        if d == 'buy': return 'buy'
-        if d == 'sell': return 'sell'
-        return 'other'
+        def classify_event(d):
+            d = str(d).lower()
+            if 'open long' in d: return 'open_long'
+            if 'close long' in d: return 'close_long'
+            if 'open short' in d: return 'open_short'
+            if 'close short' in d: return 'close_short'
+            if d == 'buy': return 'buy'
+            if d == 'sell': return 'sell'
+            return 'other'
 
     hd['event_type'] = hd['Direction'].apply(classify_event)
     hd['is_long'] = hd['event_type'].isin(['open_long', 'close_long', 'buy'])

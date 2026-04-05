@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Sentiment × Trader Behavior | Hyperliquid Analysis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.52.1/build/stlite.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700&display=swap');
+
+      body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #0d1117;
+        font-family: 'Inter', sans-serif;
+        color: white;
+        overflow: hidden;
+      }
+
+      /* Premium Loading Screen */
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%, #161b22 0%, #0d1117 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease-out, visibility 0.8s;
+      }
+
+      .cyber-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+        position: relative;
+        filter: drop-shadow(0 0 15px rgba(122, 162, 247, 0.5));
+      }
+
+      .cyber-text {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #7aa2f7 0%, #bb9af7 50%, #7dcfff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+        text-align: center;
+      }
+
+      .loading-info {
+        color: #8b949e;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+      }
+
+      .progress-container {
+        width: 300px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .progress-bar {
+        position: absolute;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(90deg, #7aa2f7, #bb9af7);
+        border-radius: 10px;
+        animation: loading-anim 2s infinite ease-in-out;
+      }
+
+      @keyframes loading-anim {
+        0% { left: -30%; }
+        100% { left: 100%; }
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #7aa2f7;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 10px #7aa2f7;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.5; }
+        50% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(0.9); opacity: 0.5; }
+      }
+
+      #stlite-root {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-overlay">
+      <img class="cyber-logo" src="https://img.icons8.com/fluency/240/combo-chart.png" alt="Logo" />
+      <div class="cyber-text">Launching Analytics Engine</div>
+      <div class="loading-info">
+        <span class="status-dot"></span>
+        Initializing WebAssembly Environment...
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.75rem; color: #484f58;">Optimizing for 47MB dataset. Please wait.</p>
+    </div>
+
+    <div id="stlite-root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.52.1/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: ["pandas", "numpy", "plotly", "scikit-learn"],
+          entrypoint: "app.py",
+          files: {
+            "app.py": {
+              url: "app.py",
+            },
+            "fear_greed_index.csv": {
+              url: "fear_greed_index.csv",
+            },
+            "historical_data.csv": {
+              url: "historical_data.csv",
+            },
+            "charts/12_strategy_recommendations.png": {
+              url: "charts/12_strategy_recommendations.png",
+            }
+          },
+          streamlitConfig: {
+            "server.enableCORS": false,
+            "server.enableXsrfProtection": false,
+            "theme.base": "dark",
+            "theme.primaryColor": "#7aa2f7",
+            "theme.backgroundColor": "#0d1117",
+            "theme.secondaryBackgroundColor": "#161b22",
+            "theme.textColor": "#c9d1d9",
+          }
+        },
+        document.getElementById("stlite-root")
+      ).then(() => {
+        // Hide loading screen after mounting
+        const overlay = document.getElementById("loading-overlay");
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+          overlay.style.visibility = "hidden";
+        }, 800);
+      });
+    </script>
+  </body>
+</html>
