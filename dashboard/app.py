@@ -113,7 +113,11 @@ st.markdown("""
 # ── Data Loading (cached) ────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    fg = pd.read_csv("fear_greed_index.csv")
+    # Get the directory of the current script
+    base_path = os.path.dirname(__file__)
+    
+    fg_path = os.path.join(base_path, "fear_greed_index.csv")
+    fg = pd.read_csv(fg_path)
     fg['date'] = pd.to_datetime(fg['date'])
     fg = fg.rename(columns={'classification': 'sentiment', 'value': 'fg_value'})
     fg['sentiment_binary'] = fg['sentiment'].map({
@@ -122,8 +126,9 @@ def load_data():
         'Greed': 'Greed', 'Extreme Greed': 'Greed'
     })
 
+    hd_path = os.path.join(base_path, "historical_data.csv.gz")
     hd_cols = ['Account', 'Direction', 'Closed PnL', 'Size USD', 'Timestamp IST']
-    hd = pd.read_csv("historical_data.csv.gz", usecols=hd_cols)
+    hd = pd.read_csv(hd_path, usecols=hd_cols)
     hd['datetime'] = pd.to_datetime(hd['Timestamp IST'], format='%d-%m-%Y %H:%M')
     hd['date'] = hd['datetime'].dt.normalize()
     hd = hd.merge(fg[['date', 'fg_value', 'sentiment', 'sentiment_binary']], on='date', how='left')
